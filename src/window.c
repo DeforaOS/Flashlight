@@ -72,6 +72,7 @@ FlashlightWindow * flashlightwindow_new(void)
 	const int height = 400;
 	FlashlightWindow * window;
 	GtkWidget * box;
+	GtkWidget * bbox;
 	GtkWidget * widget;
 	GtkOrientation orientation = (height >= width)
 		? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL;
@@ -96,12 +97,17 @@ FlashlightWindow * flashlightwindow_new(void)
 		return NULL;
 	}
 	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+	/* flashlight */
 	widget = flashlight_get_widget(window->flashlight);
 	gtk_box_pack_start(GTK_BOX(box), widget, TRUE, TRUE, 0);
+	/* about */
+	bbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	widget = gtk_button_new_from_stock(GTK_STOCK_ABOUT);
 	g_signal_connect_swapped(widget, "clicked", G_CALLBACK(
 				_flashlightwindow_on_about), window);
-	gtk_box_pack_start(GTK_BOX(box), widget, FALSE, TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(bbox), widget);
+	gtk_box_pack_start(GTK_BOX(box), bbox, FALSE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(window->window), box);
 	gtk_widget_show_all(window->window);
 	window->source = g_idle_add(_flashlightwindow_on_idle, window);
