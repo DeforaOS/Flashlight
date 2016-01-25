@@ -60,14 +60,20 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 {
 	Flashlight * flashlight;
 	GtkWidget * widget;
+	GtkIconTheme * icontheme;
+	GdkPixbuf * pixbuf;
+	const unsigned int size = 256;
+	const unsigned int flags = 0;
 
 	if((flashlight = object_new(sizeof(*flashlight))) == NULL)
 		return NULL;
 	flashlight->box = gtk_box_new(orientation, 0);
 	gtk_box_set_homogeneous(GTK_BOX(flashlight->box), TRUE);
 	/* image */
-	flashlight->image = gtk_image_new_from_icon_name("gtk-dialog-info",
-			GTK_ICON_SIZE_DIALOG);
+	icontheme = gtk_icon_theme_get_default();
+	pixbuf = gtk_icon_theme_load_icon(icontheme, "gtk-dialog-info", size,
+			flags, NULL);
+	flashlight->image = gtk_image_new_from_pixbuf(pixbuf);
 	gtk_box_pack_start(GTK_BOX(flashlight->box), flashlight->image, TRUE,
 			TRUE, 0);
 	/* controls */
