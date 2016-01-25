@@ -50,7 +50,11 @@ struct _Flashlight
 
 /* prototypes */
 /* callbacks */
+#if GTK_CHECK_VERSION(3, 0, 0)
+static void _flashlight_on_activate(gpointer data);
+#else
 static void _flashlight_on_toggled(GtkWidget * widget, gpointer data);
+#endif
 
 
 /* public */
@@ -78,9 +82,15 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 			TRUE, 0);
 	/* controls */
 	widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	flashlight->co_main = gtk_switch_new();
+	g_signal_connect_swapped(flashlight->co_main, "notify::active",
+			G_CALLBACK(_flashlight_on_activate), flashlight);
+#else
 	flashlight->co_main = gtk_toggle_button_new_with_mnemonic("_Switch");
 	g_signal_connect(flashlight->co_main, "toggled", G_CALLBACK(
 				_flashlight_on_toggled), flashlight);
+#endif
 	gtk_box_pack_start(GTK_BOX(widget), flashlight->co_main, TRUE, TRUE,
 			0);
 	gtk_box_pack_start(GTK_BOX(flashlight->box), widget, FALSE, TRUE, 0);
@@ -109,8 +119,13 @@ gboolean flashlight_get_active(Flashlight * flashlight)
 		case FBA_INACTIVE:
 			return FALSE;
 		default:
+#if GTK_CHECK_VERSION(3, 0, 0)
+			return gtk_switch_get_active(GTK_SWITCH(
+						flashlight->co_main));
+#else
 			return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 						flashlight->co_main));
+#endif
 	}
 }
 
@@ -127,8 +142,12 @@ void flashlight_set_active(Flashlight * flashlight, gboolean active)
 {
 	flashlightbackend_set(active);
 	gtk_widget_set_sensitive(flashlight->image, active);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	gtk_switch_set_active(GTK_SWITCH(flashlight->co_main), active);
+#else
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flashlight->co_main),
 			active);
+#endif
 }
 
 
@@ -158,6 +177,16 @@ void flashlight_toggle(Flashlight * flashlight)
 
 /* prototypes */
 /* callbacks */
+/* flashlight_on_activate */
+static void _flashlight_on_activate(gpointer data)
+{
+	Flashlight * flashlight = data;
+
+	flashlight_set_active(flashlight, gtk_switch_get_active(
+				GTK_SWITCH(flashlight->co_main)));
+}
+
+
 /* flashlight_on_toggled */
 static void _flashlight_on_toggled(GtkWidget * widget, gpointer data)
 {
