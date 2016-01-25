@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Flashlight
+TryExec=flashlight
+Exec=flashlight
+Icon=gtk-dialog-info
+Type=Application
+Categories=Utility;GTK;
+StartupNotify=true
