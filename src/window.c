@@ -68,6 +68,7 @@ FlashlightWindow * flashlightwindow_new(void)
 		return NULL;
 	window->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(window->window), width, height);
+	gtk_window_set_icon_name(GTK_WINDOW(window->window), "gtk-dialog-info");
 	gtk_window_set_title(GTK_WINDOW(window->window), PACKAGE);
 	g_signal_connect(window->window, "delete-event", G_CALLBACK(
 				_flashlightwindow_on_closex), NULL);
