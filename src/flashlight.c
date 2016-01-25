@@ -60,7 +60,8 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 	flashlight->box = gtk_box_new(orientation, 0);
 	gtk_box_set_homogeneous(GTK_BOX(flashlight->box), TRUE);
 	/* image */
-	flashlight->image = gtk_image_new();
+	flashlight->image = gtk_image_new_from_icon_name("gtk-dialog-info",
+			GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start(GTK_BOX(flashlight->box), flashlight->image, TRUE,
 			TRUE, 0);
 	/* controls */
