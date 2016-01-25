@@ -82,10 +82,26 @@ void flashlight_delete(Flashlight * flashlight)
 
 
 /* accessors */
+/* flashlight_get_active */
+gboolean flashlight_get_active(Flashlight * flashlight)
+{
+	return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+				flashlight->co_main));
+}
+
+
 /* flashlight_get_widget */
 GtkWidget * flashlight_get_widget(Flashlight * flashlight)
 {
 	return flashlight->box;
+}
+
+
+/* flashlight_set_active */
+void flashlight_set_active(Flashlight * flashlight, gboolean active)
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flashlight->co_main),
+			active);
 }
 
 
@@ -108,8 +124,6 @@ void flashlight_toggle(Flashlight * flashlight)
 {
 	gboolean active;
 
-	active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
-				flashlight->co_main));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flashlight->co_main),
-			!active);
+	active = flashlight_get_active(flashlight);
+	flashlight_set_active(flashlight, !active);
 }
