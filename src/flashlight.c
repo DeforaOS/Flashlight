@@ -30,6 +30,7 @@
 
 #include <System.h>
 #include <Desktop.h>
+#include "backend.h"
 #include "flashlight.h"
 
 
@@ -94,8 +95,16 @@ void flashlight_delete(Flashlight * flashlight)
 /* flashlight_get_active */
 gboolean flashlight_get_active(Flashlight * flashlight)
 {
-	return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
-				flashlight->co_main));
+	switch(flashlightbackend_get())
+	{
+		case FBA_ACTIVE:
+			return TRUE;
+		case FBA_INACTIVE:
+			return FALSE;
+		default:
+			return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+						flashlight->co_main));
+	}
 }
 
 
@@ -109,6 +118,7 @@ GtkWidget * flashlight_get_widget(Flashlight * flashlight)
 /* flashlight_set_active */
 void flashlight_set_active(Flashlight * flashlight, gboolean active)
 {
+	flashlightbackend_set(active);
 	gtk_widget_set_sensitive(flashlight->image, active);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flashlight->co_main),
 			active);
