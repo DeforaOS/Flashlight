@@ -102,6 +102,7 @@ GtkWidget * flashlight_get_widget(Flashlight * flashlight)
 /* flashlight_set_active */
 void flashlight_set_active(Flashlight * flashlight, gboolean active)
 {
+	gtk_widget_set_sensitive(flashlight->image, active);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flashlight->co_main),
 			active);
 }
