@@ -70,6 +70,7 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 	gtk_box_pack_start(GTK_BOX(widget), flashlight->co_main, FALSE, TRUE,
 			0);
 	gtk_box_pack_start(GTK_BOX(flashlight->box), widget, FALSE, TRUE, 0);
+	flashlight_set_active(flashlight, FALSE);
 	return flashlight;
 }
 
