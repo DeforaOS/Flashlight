@@ -136,7 +136,8 @@ static void _flashlightwindow_on_about(gpointer data)
 	GtkWidget * dialog;
 
 	dialog = desktop_about_dialog_new();
-	gtk_window_set_transient_for(GTK_WINDOW(dialog), window->window);
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+			GTK_WINDOW(window->window));
 	desktop_about_dialog_set_authors(dialog, _flashlightwindow_authors);
 	desktop_about_dialog_set_comments(dialog,
 			"Flashlight application for the DeforaOS desktop");
