@@ -59,6 +59,7 @@ static char const * _flashlightwindow_authors[] =
 /* callbacks */
 static void _flashlightwindow_on_about(gpointer data);
 static gboolean _flashlightwindow_on_closex(void);
+static gboolean _flashlightwindow_on_configure(gpointer data);
 static gboolean _flashlightwindow_on_idle(gpointer data);
 
 
@@ -82,6 +83,8 @@ FlashlightWindow * flashlightwindow_new(void)
 	gtk_window_set_default_size(GTK_WINDOW(window->window), width, height);
 	gtk_window_set_icon_name(GTK_WINDOW(window->window), "gtk-dialog-info");
 	gtk_window_set_title(GTK_WINDOW(window->window), PACKAGE);
+	g_signal_connect_swapped(window->window, "configure-event", G_CALLBACK(
+				_flashlightwindow_on_configure), window);
 	g_signal_connect(window->window, "delete-event", G_CALLBACK(
 				_flashlightwindow_on_closex), NULL);
 	window->flashlight = flashlight_new(orientation);
@@ -145,6 +148,22 @@ static void _flashlightwindow_on_about(gpointer data)
 static gboolean _flashlightwindow_on_closex(void)
 {
 	gtk_main_quit();
+	return TRUE;
+}
+
+
+/* flashlightwindow_on_configure */
+static gboolean _flashlightwindow_on_configure(gpointer data)
+{
+	FlashlightWindow * window = data;
+	gint width;
+	gint height;
+	GtkOrientation orientation;
+
+	gtk_window_get_size(GTK_WINDOW(window->window), &width, &height);
+	orientation = (height >= width)
+		? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL;
+	flashlight_set_orientation(window->flashlight, orientation);
 	return TRUE;
 }
 
