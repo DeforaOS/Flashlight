@@ -67,6 +67,7 @@ FlashlightWindow * flashlightwindow_new(void)
 	if((window = object_new(sizeof(*window))) == NULL)
 		return NULL;
 	window->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_container_set_border_width(GTK_CONTAINER(window->window), 4);
 	gtk_window_set_default_size(GTK_WINDOW(window->window), width, height);
 	gtk_window_set_icon_name(GTK_WINDOW(window->window), "gtk-dialog-info");
 	gtk_window_set_title(GTK_WINDOW(window->window), PACKAGE);
