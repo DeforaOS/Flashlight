@@ -92,6 +92,7 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 /* flashlight_delete */
 void flashlight_delete(Flashlight * flashlight)
 {
+	flashlightbackend_set(FALSE);
 	gtk_widget_destroy(flashlight->box);
 	object_delete(flashlight);
 }
