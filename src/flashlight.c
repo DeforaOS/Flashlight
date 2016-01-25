@@ -75,7 +75,7 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 	flashlight->co_main = gtk_toggle_button_new_with_mnemonic("_Switch");
 	g_signal_connect(flashlight->co_main, "toggled", G_CALLBACK(
 				_flashlight_on_toggled), flashlight);
-	gtk_box_pack_start(GTK_BOX(widget), flashlight->co_main, FALSE, TRUE,
+	gtk_box_pack_start(GTK_BOX(widget), flashlight->co_main, TRUE, TRUE,
 			0);
 	gtk_box_pack_start(GTK_BOX(flashlight->box), widget, FALSE, TRUE, 0);
 	flashlight_set_active(flashlight, flashlight_get_active(flashlight));
