@@ -114,7 +114,7 @@ static gboolean _flashlightwindow_on_idle(gpointer data)
 {
 	FlashlightWindow * window = data;
 
-	flashlight_toggle(window->flashlight);
+	flashlight_set_active(window->flashlight, TRUE);
 	window->source = 0;
 	return FALSE;
 }
