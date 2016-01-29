@@ -28,11 +28,52 @@
 
 
 
-#include "backend.h"
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <string.h>
+#include <errno.h>
+#include <System.h>
+#include "../backend.h"
 
-#if defined(__NetBSD__)
-# include "backend/acpi.c"
-#else
-# warning Unsupported platform: using dummy backend
-# include "backend/dummy.c"
+#ifndef PROGNAME
+# define PROGNAME "flashlight"
 #endif
+
+
+/* flashlightbackend_get */
+FlashlightBackendActive flashlightbackend_get(void)
+{
+	char const sysctl[] = "hw.acpi.acpiout0.brightness";
+	size_t s;
+	int level;
+
+	if(sysctlbyname(sysctl, &level, &s, NULL, 0) != 0)
+	{
+		error_set_print(PROGNAME, -errno, "%s: %s", sysctl,
+				strerror(errno));
+		return FBA_UNKNOWN;
+	}
+	else if(level < 0)
+	{
+		error_set_print(PROGNAME, -ERANGE, "%s: %s", sysctl,
+				strerror(ERANGE));
+		return FBA_UNKNOWN;
+	}
+	return (level > 0) ? FBA_ACTIVE : FBA_INACTIVE;
+}
+
+
+/* flashlightbackend_set */
+int flashlightbackend_set(FlashlightBackendActive active)
+{
+	char const sysctl[] = "hw.acpi.acpiout0.brightness";
+	int level = active ? 100 : 0;
+
+	if(sysctlbyname(sysctl, NULL, NULL, &level, sizeof(level)) != 0)
+	{
+		error_set_print(PROGNAME, -errno, "%s: %s", sysctl,
+				strerror(errno));
+		return FBA_UNKNOWN;
+	}
+	return 0;
+}
