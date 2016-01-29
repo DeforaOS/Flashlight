@@ -29,11 +29,13 @@ static char const _flashlightwindow_license[] =
 
 
 
+#include <libintl.h>
 #include <System.h>
 #include <Desktop.h>
 #include "flashlight.h"
 #include "window.h"
 #include "../config.h"
+#define _(string) gettext(string)
 
 
 /* FlashlightWindow */
@@ -96,7 +98,7 @@ FlashlightWindow * flashlightwindow_new(void)
 	gtk_container_set_border_width(GTK_CONTAINER(window->window), 4);
 	gtk_window_set_default_size(GTK_WINDOW(window->window), width, height);
 	gtk_window_set_icon_name(GTK_WINDOW(window->window), "gtk-dialog-info");
-	gtk_window_set_title(GTK_WINDOW(window->window), PACKAGE);
+	gtk_window_set_title(GTK_WINDOW(window->window), _("Flashlight"));
 	g_signal_connect_swapped(window->window, "configure-event", G_CALLBACK(
 				_flashlightwindow_on_configure), window);
 	g_signal_connect(window->window, "delete-event", G_CALLBACK(
@@ -153,7 +155,7 @@ static void _flashlightwindow_on_about(gpointer data)
 			GTK_WINDOW(window->window));
 	desktop_about_dialog_set_authors(dialog, _flashlightwindow_authors);
 	desktop_about_dialog_set_comments(dialog,
-			"Flashlight application for the DeforaOS desktop");
+			_("Flashlight application for the DeforaOS desktop"));
 	desktop_about_dialog_set_copyright(dialog, _flashlightwindow_copyright);
 	desktop_about_dialog_set_license(dialog, _flashlightwindow_license);
 	desktop_about_dialog_set_logo_icon_name(dialog, "gtk-dialog-info");
