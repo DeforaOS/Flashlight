@@ -47,20 +47,27 @@ struct _FlashlightWindow
 };
 
 
-/* constants */
-static char const * _flashlightwindow_authors[] =
-{
-	"Pierre Pronchery <khorben@defora.org>",
-	NULL
-};
-
-
 /* prototypes */
 /* callbacks */
 static void _flashlightwindow_on_about(gpointer data);
 static gboolean _flashlightwindow_on_closex(void);
 static gboolean _flashlightwindow_on_configure(gpointer data);
 static gboolean _flashlightwindow_on_idle(gpointer data);
+
+
+/* constants */
+static const DesktopAccel _flashlightwindow_accel[] =
+{
+	{ G_CALLBACK(_flashlightwindow_on_closex), GDK_CONTROL_MASK,
+		GDK_KEY_W },
+	{ NULL, 0, 0 }
+};
+
+static char const * _flashlightwindow_authors[] =
+{
+	"Pierre Pronchery <khorben@defora.org>",
+	NULL
+};
 
 
 /* public */
@@ -71,6 +78,7 @@ FlashlightWindow * flashlightwindow_new(void)
 	const int width = 300;
 	const int height = 400;
 	FlashlightWindow * window;
+	GtkAccelGroup * group;
 	GtkWidget * box;
 	GtkWidget * bbox;
 	GtkWidget * widget;
@@ -79,7 +87,12 @@ FlashlightWindow * flashlightwindow_new(void)
 
 	if((window = object_new(sizeof(*window))) == NULL)
 		return NULL;
+	/* window */
+	group = gtk_accel_group_new();
+	desktop_accel_create(_flashlightwindow_accel, window, group);
 	window->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_add_accel_group(GTK_WINDOW(window->window), group);
+	g_object_unref(group);
 	gtk_container_set_border_width(GTK_CONTAINER(window->window), 4);
 	gtk_window_set_default_size(GTK_WINDOW(window->window), width, height);
 	gtk_window_set_icon_name(GTK_WINDOW(window->window), "gtk-dialog-info");
