@@ -53,7 +53,7 @@ struct _Flashlight
 #if GTK_CHECK_VERSION(3, 0, 0)
 static void _flashlight_on_activate(gpointer data);
 #else
-static void _flashlight_on_toggled(GtkWidget * widget, gpointer data);
+static void _flashlight_on_toggled(gpointer data);
 #endif
 
 
@@ -88,7 +88,7 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 			G_CALLBACK(_flashlight_on_activate), flashlight);
 #else
 	flashlight->co_main = gtk_toggle_button_new_with_mnemonic("_Switch");
-	g_signal_connect(flashlight->co_main, "toggled", G_CALLBACK(
+	g_signal_connect_swapped(flashlight->co_main, "toggled", G_CALLBACK(
 				_flashlight_on_toggled), flashlight);
 #endif
 	gtk_box_pack_start(GTK_BOX(widget), flashlight->co_main, TRUE, TRUE,
@@ -190,10 +190,10 @@ static void _flashlight_on_activate(gpointer data)
 
 
 /* flashlight_on_toggled */
-static void _flashlight_on_toggled(GtkWidget * widget, gpointer data)
+static void _flashlight_on_toggled(gpointer data)
 {
 	Flashlight * flashlight = data;
 
 	flashlight_set_active(flashlight, gtk_toggle_button_get_active(
-				GTK_TOGGLE_BUTTON(widget)));
+				GTK_TOGGLE_BUTTON(flashlight->co_main)));
 }
