@@ -56,6 +56,7 @@ static void _flashlightwindow_on_about(gpointer data);
 static gboolean _flashlightwindow_on_closex(void);
 static gboolean _flashlightwindow_on_configure(gpointer data);
 static gboolean _flashlightwindow_on_idle(gpointer data);
+static void _flashlightwindow_on_preferences(gpointer data);
 
 
 /* constants */
@@ -119,6 +120,11 @@ FlashlightWindow * flashlightwindow_new(void)
 	/* about */
 	bbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_set_spacing(GTK_BOX(bbox), 4);
+	widget = gtk_button_new_from_stock(GTK_STOCK_PREFERENCES);
+	g_signal_connect_swapped(widget, "clicked", G_CALLBACK(
+				_flashlightwindow_on_preferences), window);
+	gtk_container_add(GTK_CONTAINER(bbox), widget);
 	widget = gtk_button_new_from_stock(GTK_STOCK_ABOUT);
 	g_signal_connect_swapped(widget, "clicked", G_CALLBACK(
 				_flashlightwindow_on_about), window);
@@ -200,4 +206,36 @@ static gboolean _flashlightwindow_on_idle(gpointer data)
 	flashlight_set_active(window->flashlight, TRUE);
 	window->source = 0;
 	return FALSE;
+}
+
+
+/* flashlightwindow_on_preferences */
+static void _flashlightwindow_on_preferences(gpointer data)
+{
+	FlashlightWindow * window = data;
+	GtkWidget * dialog;
+	const unsigned int flags = GTK_DIALOG_MODAL
+		| GTK_DIALOG_DESTROY_WITH_PARENT;
+	GtkWidget * content;
+	GtkWidget * widget;
+	gboolean active;
+
+	dialog = gtk_dialog_new_with_buttons(_("Preferences"),
+			GTK_WINDOW(window->window), flags,
+			_("_Close"), GTK_RESPONSE_CLOSE, NULL);
+#if GTK_CHECK_VERSION(2, 14, 0)
+	content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+#else
+	content = GTK_DIALOG(dialog)->content_area;
+#endif
+	widget = gtk_check_button_new_with_mnemonic(
+			_("Stay lit when released"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
+			flashlight_get_keep_lit(window->flashlight));
+	gtk_widget_show(widget);
+	gtk_box_pack_start(GTK_BOX(content), widget, FALSE, TRUE, 0);
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+	flashlight_set_keep_lit(window->flashlight, active);
+	gtk_widget_destroy(dialog);
 }

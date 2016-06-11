@@ -46,12 +46,16 @@ struct _Flashlight
 	/* image */
 	GtkWidget * image;
 	/* controls */
-	GtkWidget * co_main;
+	gboolean control;
+	GtkWidget * co_press;
+	GtkWidget * co_toggle;
 };
 
 
 /* prototypes */
 /* callbacks */
+static gboolean _flashlight_on_button_pressed(gpointer data);
+static gboolean _flashlight_on_button_released(gpointer data);
 static void _flashlight_on_toggled(gpointer data);
 
 
@@ -80,20 +84,33 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 			TRUE, 0);
 	/* controls */
 	widget = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+	/* press switch */
+	flashlight->co_press = gtk_button_new_with_mnemonic(_("_Press"));
+	g_signal_connect_swapped(flashlight->co_press, "button-press-event",
+			G_CALLBACK(_flashlight_on_button_pressed), flashlight);
+	g_signal_connect_swapped(flashlight->co_press, "button-release-event",
+			G_CALLBACK(_flashlight_on_button_released), flashlight);
+	gtk_widget_set_no_show_all(flashlight->co_press, TRUE);
+	gtk_box_pack_start(GTK_BOX(widget), flashlight->co_press, TRUE, TRUE,
+			0);
+	/* toggle switch */
 #if GTK_CHECK_VERSION(3, 0, 0)
-	flashlight->co_main = gtk_switch_new();
-	g_signal_connect_swapped(flashlight->co_main, "notify::active",
+	flashlight->co_toggle = gtk_switch_new();
+	g_signal_connect_swapped(flashlight->co_toggle, "notify::active",
 			G_CALLBACK(_flashlight_on_toggled), flashlight);
 #else
 # warning Switch widget is not available (needs Gtk+ >= 3.0)
-	flashlight->co_main = gtk_toggle_button_new_with_mnemonic(
+	flashlight->co_toggle = gtk_toggle_button_new_with_mnemonic(
 			_("_Switch"));
-	g_signal_connect_swapped(flashlight->co_main, "toggled", G_CALLBACK(
+	g_signal_connect_swapped(flashlight->co_toggle, "toggled", G_CALLBACK(
 				_flashlight_on_toggled), flashlight);
 #endif
-	gtk_box_pack_start(GTK_BOX(widget), flashlight->co_main, TRUE, TRUE, 0);
+	gtk_widget_set_no_show_all(flashlight->co_toggle, TRUE);
+	gtk_box_pack_start(GTK_BOX(widget), flashlight->co_toggle, TRUE, TRUE,
+			0);
 	gtk_box_pack_start(GTK_BOX(flashlight->box), widget, FALSE, TRUE, 0);
 	flashlight_set_active(flashlight, flashlight_get_active(flashlight));
+	flashlight_set_keep_lit(flashlight, TRUE);
 	return flashlight;
 }
 
@@ -120,12 +137,19 @@ gboolean flashlight_get_active(Flashlight * flashlight)
 		default:
 #if GTK_CHECK_VERSION(3, 0, 0)
 			return gtk_switch_get_active(GTK_SWITCH(
-						flashlight->co_main));
+						flashlight->co_toggle));
 #else
 			return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
-						flashlight->co_main));
+						flashlight->co_toggle));
 #endif
 	}
+}
+
+
+/* flashlight_get_keep_lit */
+gboolean flashlight_get_keep_lit(Flashlight * flashlight)
+{
+	return flashlight->control;
 }
 
 
@@ -142,11 +166,20 @@ void flashlight_set_active(Flashlight * flashlight, gboolean active)
 	flashlightbackend_set(active);
 	gtk_widget_set_sensitive(flashlight->image, active);
 #if GTK_CHECK_VERSION(3, 0, 0)
-	gtk_switch_set_active(GTK_SWITCH(flashlight->co_main), active);
+	gtk_switch_set_active(GTK_SWITCH(flashlight->co_toggle), active);
 #else
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flashlight->co_main),
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(flashlight->co_toggle),
 			active);
 #endif
+}
+
+
+/* flashlight_set_keep_lit */
+void flashlight_set_keep_lit(Flashlight * flashlight, gboolean active)
+{
+	flashlight->control = active;
+	gtk_widget_hide(active ? flashlight->co_press : flashlight->co_toggle);
+	gtk_widget_show(active ? flashlight->co_toggle : flashlight->co_press);
 }
 
 
@@ -176,6 +209,24 @@ void flashlight_toggle(Flashlight * flashlight)
 
 /* prototypes */
 /* callbacks */
+static gboolean _flashlight_on_button_pressed(gpointer data)
+{
+	Flashlight * flashlight = data;
+
+	flashlight_set_active(flashlight, TRUE);
+	return FALSE;
+}
+
+
+static gboolean _flashlight_on_button_released(gpointer data)
+{
+	Flashlight * flashlight = data;
+
+	flashlight_set_active(flashlight, FALSE);
+	return FALSE;
+}
+
+
 /* flashlight_on_toggled */
 static void _flashlight_on_toggled(gpointer data)
 {
@@ -183,9 +234,9 @@ static void _flashlight_on_toggled(gpointer data)
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 	flashlight_set_active(flashlight, gtk_switch_get_active(
-				GTK_SWITCH(flashlight->co_main)));
+				GTK_SWITCH(flashlight->co_toggle)));
 #else
 	flashlight_set_active(flashlight, gtk_toggle_button_get_active(
-				GTK_TOGGLE_BUTTON(flashlight->co_main)));
+				GTK_TOGGLE_BUTTON(flashlight->co_toggle)));
 #endif
 }

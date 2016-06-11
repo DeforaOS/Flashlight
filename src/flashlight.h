@@ -43,9 +43,11 @@ void flashlight_delete(Flashlight * window);
 
 /* accessors */
 gboolean flashlight_get_active(Flashlight * flashlight);
+gboolean flashlight_get_keep_lit(Flashlight * flashlight);
 GtkWidget * flashlight_get_widget(Flashlight * flashlight);
 
 void flashlight_set_active(Flashlight * flashlight, gboolean active);
+void flashlight_set_keep_lit(Flashlight * flashlight, gboolean active);
 void flashlight_set_orientation(Flashlight * flashlight,
 		GtkOrientation orientation);
 
