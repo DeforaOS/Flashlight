@@ -28,10 +28,12 @@
 
 
 
+#include <libintl.h>
 #include <System.h>
 #include <Desktop.h>
 #include "backend.h"
 #include "flashlight.h"
+#define _(string) gettext(string)
 
 
 /* Flashlight */
@@ -84,7 +86,8 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 			G_CALLBACK(_flashlight_on_toggled), flashlight);
 #else
 # warning Switch widget is not available (needs Gtk+ >= 3.0)
-	flashlight->co_main = gtk_toggle_button_new_with_mnemonic("_Switch");
+	flashlight->co_main = gtk_toggle_button_new_with_mnemonic(
+			_("_Switch"));
 	g_signal_connect_swapped(flashlight->co_main, "toggled", G_CALLBACK(
 				_flashlight_on_toggled), flashlight);
 #endif
