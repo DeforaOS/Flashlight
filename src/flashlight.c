@@ -50,11 +50,7 @@ struct _Flashlight
 
 /* prototypes */
 /* callbacks */
-#if GTK_CHECK_VERSION(3, 0, 0)
-static void _flashlight_on_activate(gpointer data);
-#else
 static void _flashlight_on_toggled(gpointer data);
-#endif
 
 
 /* public */
@@ -85,7 +81,7 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 #if GTK_CHECK_VERSION(3, 0, 0)
 	flashlight->co_main = gtk_switch_new();
 	g_signal_connect_swapped(flashlight->co_main, "notify::active",
-			G_CALLBACK(_flashlight_on_activate), flashlight);
+			G_CALLBACK(_flashlight_on_toggled), flashlight);
 #else
 	flashlight->co_main = gtk_toggle_button_new_with_mnemonic("_Switch");
 	g_signal_connect_swapped(flashlight->co_main, "toggled", G_CALLBACK(
@@ -177,23 +173,16 @@ void flashlight_toggle(Flashlight * flashlight)
 
 /* prototypes */
 /* callbacks */
-#if GTK_CHECK_VERSION(3, 0, 0)
-/* flashlight_on_activate */
-static void _flashlight_on_activate(gpointer data)
-{
-	Flashlight * flashlight = data;
-
-	flashlight_set_active(flashlight, gtk_switch_get_active(
-				GTK_SWITCH(flashlight->co_main)));
-}
-#endif
-
-
 /* flashlight_on_toggled */
 static void _flashlight_on_toggled(gpointer data)
 {
 	Flashlight * flashlight = data;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+	flashlight_set_active(flashlight, gtk_switch_get_active(
+				GTK_SWITCH(flashlight->co_main)));
+#else
 	flashlight_set_active(flashlight, gtk_toggle_button_get_active(
 				GTK_TOGGLE_BUTTON(flashlight->co_main)));
+#endif
 }
