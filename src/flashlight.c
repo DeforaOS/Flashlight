@@ -177,6 +177,7 @@ void flashlight_toggle(Flashlight * flashlight)
 
 /* prototypes */
 /* callbacks */
+#if GTK_CHECK_VERSION(3, 0, 0)
 /* flashlight_on_activate */
 static void _flashlight_on_activate(gpointer data)
 {
@@ -185,6 +186,7 @@ static void _flashlight_on_activate(gpointer data)
 	flashlight_set_active(flashlight, gtk_switch_get_active(
 				GTK_SWITCH(flashlight->co_main)));
 }
+#endif
 
 
 /* flashlight_on_toggled */
