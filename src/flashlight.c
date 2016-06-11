@@ -83,6 +83,7 @@ Flashlight * flashlight_new(GtkOrientation orientation)
 	g_signal_connect_swapped(flashlight->co_main, "notify::active",
 			G_CALLBACK(_flashlight_on_toggled), flashlight);
 #else
+# warning Switch widget is not available (needs Gtk+ >= 3.0)
 	flashlight->co_main = gtk_toggle_button_new_with_mnemonic("_Switch");
 	g_signal_connect_swapped(flashlight->co_main, "toggled", G_CALLBACK(
 				_flashlight_on_toggled), flashlight);
