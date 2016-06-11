@@ -30,6 +30,7 @@ static char const _flashlightwindow_license[] =
 
 
 #include <libintl.h>
+#include <gdk/gdkkeysyms.h>
 #include <System.h>
 #include <Desktop.h>
 #include "flashlight.h"
