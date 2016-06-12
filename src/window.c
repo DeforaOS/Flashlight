@@ -223,6 +223,7 @@ static void _flashlightwindow_on_preferences(gpointer data)
 	dialog = gtk_dialog_new_with_buttons(_("Preferences"),
 			GTK_WINDOW(window->window), flags,
 			_("_Close"), GTK_RESPONSE_CLOSE, NULL);
+	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 #if GTK_CHECK_VERSION(2, 14, 0)
 	content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 #else
