@@ -1,6 +1,6 @@
 /* $Id$ */
 static char const _flashlightwindow_copyright[] =
-"Copyright © 2016 Pierre Pronchery <khorben@defora.org>";
+"Copyright © 2016-2017 Pierre Pronchery <khorben@defora.org>";
 /* This file is part of DeforaOS Desktop Flashlight */
 /* All rights reserved. */
 static char const _flashlightwindow_license[] =
